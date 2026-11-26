@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LordPixel - Anasayfa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome İkonları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#08090c] text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white" style="background-image: radial-gradient(circle at 50% 0%, #1d090c 0%, #08090c 60%);">
+
+    <!-- Üst Menü (Navbar) -->
+    <header class="w-full border-b border-red-950/30 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Sol Taraf: Logo ve Navigasyon Linkleri -->
+            <div class="flex items-center space-x-8 h-full">
+                <!-- Logo -->
+                <a href="#" class="flex items-center shrink-0">
+                    <img src="https://cdn.freebiesupply.com/logos/large/2x/lp-4-logo-png-transparent.png" 
+                         alt="LordPixel Logo" 
+                         onerror="this.src='https://placehold.co/40x40/dc2626/ffffff?text=LP'"
+                         class="h-10 w-auto object-contain filter drop-shadow-[0_0_20px_rgba(220,38,38,0.95)] drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                </a>
+
+                <!-- Masaüstü Menü Linkleri -->
+                <nav class="hidden md:flex items-center space-x-7 h-full text-sm font-medium">
+                    <button onclick="switchPage('anasayfa')" id="nav-anasayfa" class="nav-link text-white h-full flex items-center border-b-[3px] border-red-600 px-4 transition-colors">
+                        Anasayfa
+                    </button>
+                    <button onclick="switchPage('market')" id="nav-market" class="nav-link text-gray-400 hover:text-white h-full flex items-center border-b-[3px] border-transparent hover:border-red-600/60 px-4 transition-colors">
+                        Market
+                    </button>
+                    <button onclick="switchPage('kredi')" id="nav-kredi" class="nav-link text-gray-400 hover:text-white h-full flex items-center border-b-[3px] border-transparent hover:border-red-600/60 px-4 transition-colors">
+                        Kredi Satın Al
+                    </button>
+                    <button onclick="switchPage('destek')" id="nav-destek" class="nav-link text-gray-400 hover:text-white h-full flex items-center border-b-[3px] border-transparent hover:border-red-600/60 px-4 transition-colors">
+                        Destek
+                    </button>
+                    <button onclick="switchPage('basvuru')" id="nav-basvuru" class="nav-link text-gray-400 hover:text-white h-full flex items-center border-b-[3px] border-transparent hover:border-red-600/60 px-4 transition-colors">
+                        Yetkili Başvuruları
+                    </button>
+                    <a href="https://minecraft-mp.com/server-s366174" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white h-full flex items-center border-b-[3px] border-transparent hover:border-red-600/60 px-4 transition-colors">
+                        Oy Ver
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sağ Taraf: Kullanıcı Bakiye / Giriş Yap & Kayıt Ol Butonları -->
+            <div class="flex items-center space-x-3">
+                <div id="user-status-bar" class="hidden items-center space-x-3 bg-[#14161d] border border-red-900/40 px-3 py-1.5 rounded-lg text-xs">
+                    <span id="logged-username" class="font-bold text-white"></span>
+                    <span id="admin-badge" class="hidden bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">YÖNETİCİ</span>
+                    <span class="text-red-400 font-semibold"><i class="fa-solid fa-coins mr-1"></i><span id="user-credits">0</span> Kredi</span>
+                    <button onclick="logoutUser()" class="text-gray-400 hover:text-red-500 ml-1" title="Çıkış Yap"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+
+                <div id="auth-buttons" class="flex items-center space-x-3">
+                    <button onclick="openAuthModal('login')" class="text-sm font-medium text-gray-200 hover:text-red-400 transition-colors px-3 py-2 rounded-lg">
+                        Giriş Yap
+                    </button>
+                    <button onclick="openAuthModal('register')" class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-md shadow-lg shadow-red-600/25 transition-all active:scale-95">
+                        Kayıt Ol
+                    </button>
+                </div>
+
+                <!-- Mobil Menü Butonu -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobil Açılır Menü -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#0e1015] border-b border-red-950/30 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchPage('anasayfa'); toggleMobileMenu()" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600/20 border-l-2 border-red-600">Anasayfa</button>
+            <button onclick="switchPage('market'); toggleMobileMenu()" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Market</button>
+            <button onclick="switchPage('kredi'); toggleMobileMenu()" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Kredi Satın Al</button>
+            <button onclick="switchPage('destek'); toggleMobileMenu()" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Destek</button>
+            <button onclick="switchPage('basvuru'); toggleMobileMenu()" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Yetkili Başvuruları</button>
+            <a href="https://minecraft-mp.com/server-s366174" target="_blank" rel="noopener noreferrer" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Oy Ver</a>
+        </div>
+    </header>
+
+    <!-- Ana İçerik Bölümü -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Breadcrumb (Sayfa Yolu) -->
+        <div class="w-full bg-[#121013] border border-red-950/30 rounded-lg px-4 py-3 mb-8 flex items-center text-xs sm:text-sm">
+            <button onclick="switchPage('anasayfa')" class="text-white font-medium hover:text-red-400 transition-colors">Anasayfa</button>
+            <span class="mx-2 text-gray-600">/</span>
+            <span id="breadcrumb-current" class="text-gray-400">Haber</span>
+        </div>
+
+        <!-- ==================== SAYFA 1: ANASAYFA (HABERLER) ==================== -->
+        <section id="page-anasayfa" class="page-section">
+            <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase text-white mb-5">
+                HABER
+            </h1>
+
+            <!-- Haber Kartları Listesi -->
+            <div class="space-y-5">
+                <!-- Haber Kartı 1 -->
+                <article class="bg-[#0e1015] border border-red-950/30 hover:border-red-800/50 rounded-xl overflow-hidden flex flex-col md:flex-row transition-all duration-200 shadow-xl">
+                    <div class="w-full md:w-72 h-48 md:h-auto bg-[#2a2e37] flex items-center justify-center shrink-0">
+                        <i class="fa-regular fa-images text-5xl text-white/90"></i>
+                    </div>
+                    <div class="p-6 flex flex-col justify-between flex-grow">
+                        <div>
+                            <div class="text-xs text-gray-400 mb-2">
+                                <span class="text-white font-semibold">Bilgilendirme</span>
+                            </div>
+                            <h2 class="text-base sm:text-lg font-bold text-white uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                                <span>⚡ 2X KREDİ FIRSATI! AÇILIŞA ÖZEL KREDİ ETKİNLİĞİ BAŞLADI!</span>
+                            </h2>
+                            <p class="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                                Oyun içi mağazamızdan yapacağınız tüm kredi yüklemelerinde büyük kampanya başladı! Şimdi yüklediğiniz her miktarın tam 2 katı hesabınıza anında yansıtılacak. Daha fazla eşya, daha hızlı gelişim ve daha keyifli bir oyun deneyimi için bu fırsatı kaçırm...
+                            </p>
+                        </div>
+                        <div class="flex justify-end">
+                            <button onclick="openNewsModal('⚡ 2X KREDİ FIRSATI! AÇILIŞA ÖZEL KREDİ ETKİNLİĞİ BAŞLADI!', '', 'Oyun içi mağazamızdan yapacağınız tüm kredi yüklemelerinde büyük kampanya başladı! Şimdi yüklediğiniz her miktarın tam 2 katı hesabınıza anında yansıtılacak. Daha fazla eşya, daha hızlı gelişim ve daha keyifli bir oyun deneyimi için bu fırsatı kaçırmayın. LordPixel yönetimi iyi oyunlar diler!')" 
+                                    class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-md transition-colors shadow-md shadow-red-600/20">
+                                Devamını Oku
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Haber Kartı 2 -->
+                <article class="bg-[#0e1015] border border-red-950/30 hover:border-red-800/50 rounded-xl overflow-hidden flex flex-col md:flex-row transition-all duration-200 shadow-xl">
+                    <div class="w-full md:w-72 h-48 md:h-auto bg-[#2a2e37] flex items-center justify-center shrink-0">
+                        <i class="fa-regular fa-images text-5xl text-white/90"></i>
+                    </div>
+                    <div class="p-6 flex flex-col justify-between flex-grow">
+                        <div>
+                            <div class="text-xs text-gray-400 mb-2">
+                                <span class="text-white font-semibold">Bilgilendirme</span> - 3 Eylül 2026 07:14
+                            </div>
+                            <h2 class="text-base sm:text-lg font-bold text-white uppercase tracking-wide mb-3">
+                                SUNUCUMUZ 21 CUMARTESİ 18:00'DA AÇILIYOR.
+                            </h2>
+                            <p class="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                                LordPixel yenilenmiş sunucusu ve alt yapısı ile keyifli bir oyun deneyimi sunacaktır. 21.02.2026 Cumartesi Saat: 18.00'da herkesi sunucuya bekliyoruz. Sunucu açılışımızda bir çok etkinlikler yapılacaktır. Sunucu açılışına özel 2x Kredi ...
+                            </p>
+                        </div>
+                        <div class="flex justify-end">
+                            <button onclick="openNewsModal('SUNUCUMUZ 21 CUMARTESİ 18:00\'DA AÇILIYOR.', '3 Eylül 2026 07:14', 'LordPixel yenilenmiş sunucusu ve alt yapısı ile keyifli bir oyun deneyimi sunacaktır. 21.02.2026 Cumartesi Saat: 18.00\'da herkesi sunucuya bekliyoruz. Sunucu açılışımızda bir çok etkinlikler yapılacaktır. Sunucu açılışına özel 2x Kredi fırsatını kaçırmayın!')" 
+                                    class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-md transition-colors shadow-md shadow-red-600/20">
+                                Devamını Oku
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Sayfalama (Pagination) -->
+            <div class="flex items-center justify-center space-x-3 mt-10 mb-6">
+                <button class="text-gray-500 hover:text-white p-2 transition-colors" aria-label="Önceki Sayfa">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <button class="w-7 h-7 rounded bg-white text-black font-bold text-xs flex items-center justify-center shadow">
+                    1
+                </button>
+                <button class="text-gray-500 hover:text-white p-2 transition-colors" aria-label="Sonraki Sayfa">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== SAYFA 2: MARKET (SMP & ARKEİL) ==================== -->
+        <section id="page-market" class="page-section hidden">
+            <!-- Sunucu Seçim Ekranı (Görseldeki Kart Yapısı) -->
+            <div id="market-servers-view">
+                <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase text-white mb-6">
+                    Sunucular
+                </h1>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <!-- SMP Sunucu Kartı -->
+                    <div onclick="openServerMarket('smp')" class="group relative h-44 rounded-2xl overflow-hidden cursor-pointer border border-red-950/40 hover:border-red-600/80 shadow-xl transition-all duration-300">
+                        <img src="foto.png" 
+                             alt="SMP" 
+                             onerror="this.onerror=null;this.src='https://placehold.co/600x320/1d090c/ef4444?text=SMP'"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></div>
+                        <div class="absolute bottom-4 left-5 flex items-center justify-between right-5">
+                            <span class="text-lg sm:text-xl font-extrabold text-white tracking-wide drop-shadow">SMP</span>
+                            <i class="fa-solid fa-arrow-right text-red-500 opacity-0 group-hover:opacity-100 transform translate-x-[-6px] group-hover:translate-x-0 transition-all"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SMP İçeriği (Sadece VIP - 10 Kredi) -->
+            <div id="market-smp" class="hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <button onclick="backToServers()" class="bg-[#14171f] hover:bg-red-600/20 border border-red-950/50 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Sunucular</span>
+                        </button>
+                        <h2 class="text-lg sm:text-xl font-bold uppercase text-white">SMP MAĞAZASI</h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-[#0e1015] border border-red-950/40 hover:border-red-600/60 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl transition-all">
+                        <div>
+                            <div class="h-44 bg-[#2a2e37] flex flex-col items-center justify-center relative">
+                                <span class="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded uppercase">SMP</span>
+                                <i class="fa-solid fa-crown text-5xl text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]"></i>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h2 class="text-lg font-bold text-white">VIP</h2>
+                                    <span class="text-sm font-bold text-red-500 bg-red-950/40 border border-red-800/40 px-2.5 py-1 rounded-md">
+                                        10 Kredi
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                                    SMP sunucusuna özel VIP ayrıcalıkları! Özel sohbet etiketi, /fly, ekstra sethome hakkı ve özel VIP kiti seninle.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <button onclick="buyMarketItem('SMP - VIP', 10)" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2.5 rounded-md transition-colors shadow-lg shadow-red-600/20">
+                                Satın Al (10 Kredi)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arkeil İçeriği -->
+            <div id="market-arkeil" class="hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <button onclick="backToServers()" class="bg-[#14171f] hover:bg-red-600/20 border border-red-950/50 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Sunucular</span>
+                        </button>
+                        <h2 class="text-lg sm:text-xl font-bold uppercase text-white">ARKEİL MAĞAZASI</h2>
+                    </div>
+                </div>
+
+                <div class="bg-[#0e1015] border border-red-950/30 rounded-xl p-10 text-center">
+                    <div class="w-16 h-16 bg-red-950/30 border border-red-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-box-open text-2xl text-red-500"></i>
+                    </div>
+                    <h2 class="text-base font-bold text-white uppercase mb-2">ARKEİL MARKETİ</h2>
+                    <p class="text-xs sm:text-sm text-gray-400 max-w-md mx-auto">
+                        Arkeil sunucusu için ürünler hazırlanmaktadır. Çok yakında burada aktif olacaktır!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SAYFA 3: KREDİ SATIN AL (10 KREDİ = 2 TL) ==================== -->
+        <section id="page-kredi" class="page-section hidden">
+            <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase text-white mb-5">
+                KREDİ SATIN AL
+            </h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Kredi Paketi Kartı -->
+                <div class="bg-[#0e1015] border border-red-950/40 rounded-xl p-6 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-red-600/20 text-red-400 border border-red-800/40 text-xs font-semibold px-3 py-1 rounded-full">
+                                Standart Paket
+                            </span>
+                            <span class="text-xl font-extrabold text-white">2 ₺</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-coins text-red-500"></i>
+                            <span>10 Kredi Paketi</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                            LordPixel mağazasında geçerli <strong class="text-white">10 Kredi</strong> bakiyeyi sadece <strong class="text-red-400">2 TL</strong> karşılığında anında hesabına yükle!
+                        </p>
+                    </div>
+                    <div class="space-y-3">
+                        <input type="text" id="credit-username-input" placeholder="Minecraft Kullanıcı Adınız" class="w-full bg-[#14171f] border border-red-950/50 focus:border-red-600 rounded-lg px-4 py-2.5 text-sm text-white outline-none">
+                        <button onclick="purchaseCredits(10, 2)" class="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2.5 rounded-md transition-colors shadow-lg shadow-red-600/25">
+                            10 Kredi Satın Al (2 TL)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bilgi Kutusu -->
+                <div class="bg-[#0e1015] border border-red-950/30 rounded-xl p-6 flex flex-col justify-center space-y-4">
+                    <h3 class="text-base font-bold text-white uppercase">Nasıl Çalışır?</h3>
+                    <ul class="space-y-3 text-xs sm:text-sm text-gray-400">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                            <span>10 Kredi yalnızca <strong class="text-white">2 TL</strong> olarak fiyatlandırılmıştır.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                            <span>Yüklediğiniz 10 Kredi ile Market sekmesinden <strong class="text-white">SMP VIP</strong> paketini anında alabilirsiniz.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                            <span>Herhangi bir sorunda Destek sekmesinden yetkili ekibimize ulaşabilirsiniz.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SAYFA 4: DESTEK ==================== -->
+        <section id="page-destek" class="page-section hidden">
+            <div class="mb-5">
+                <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase text-white">
+                    DESTEK MERKEZİ
+                </h1>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Sol: Yeni Destek Talebi Oluştur -->
+                <div class="lg:col-span-5 bg-[#0e1015] border border-red-950/30 rounded-xl p-6 h-fit">
+                    <h2 class="text-sm font-bold text-white uppercase mb-4">Yeni Destek Talebi Oluştur</h2>
+                    <form onsubmit="submitSupportTicket(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Oyuncu Adınız</label>
+                            <input type="text" id="support-author" required placeholder="Örn: Oyuncu123" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Konu Başlığı</label>
+                            <input type="text" id="support-subject" required placeholder="Örn: VIP teslimatı hakkında" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Mesajınız</label>
+                            <textarea id="support-message" rows="4" required placeholder="Sorununuzu detaylıca yazın..." class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2.5 rounded-md transition-colors shadow-md shadow-red-600/20">
+                            Talebi Gönder
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sağ: Destek Talepleri Listesi -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-white uppercase">Destek Talepleri</h2>
+                    </div>
+                    <div id="support-list" class="space-y-4">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SAYFA 5: YETKİLİ BAŞVURULARI ==================== -->
+        <section id="page-basvuru" class="page-section hidden">
+            <div class="mb-5">
+                <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase text-white">
+                    YETKİLİ BAŞVURULARI
+                </h1>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Sol: Başvuru Formu -->
+                <div class="lg:col-span-5 bg-[#0e1015] border border-red-950/30 rounded-xl p-6 h-fit">
+                    <h2 class="text-sm font-bold text-white uppercase mb-4">Yetkili Başvuru Formu</h2>
+                    <form onsubmit="submitStaffApplication(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Minecraft Kullanıcı Adınız</label>
+                            <input type="text" id="app-username" required placeholder="Örn: Oyuncu123" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Yaşınız</label>
+                                <input type="number" id="app-age" required min="12" max="99" placeholder="18" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Başvurulan Rol</label>
+                                <select id="app-role" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3 py-2 text-xs sm:text-sm text-white outline-none">
+                                    <option value="Rehber">Rehber</option>
+                                    <option value="Moderatör">Moderatör</option>
+                                    <option value="Mimar">Mimar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Discord Adresiniz</label>
+                            <input type="text" id="app-discord" required placeholder="kullaniciadi" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Tecrübeleriniz & Kendinizden Bahsedin</label>
+                            <textarea id="app-reason" rows="3" required placeholder="Neden yetkili olmak istiyorsunuz?" class="w-full bg-[#14171f] border border-red-950/40 focus:border-red-600 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2.5 rounded-md transition-colors shadow-md shadow-red-600/20">
+                            Başvuruyu Gönder
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sağ: Başvuru İnceleme & Cevaplama Listesi -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-white uppercase">Gönderilen Başvurular</h2>
+                    </div>
+                    <div id="applications-list" class="space-y-4">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Alt Bilgi (Footer) -->
+    <footer class="w-full bg-[#090a0e] border-t border-red-950/30 pt-12 pb-8 mt-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
+                
+                <!-- Kolon 1: Hakkımızda -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-white">Hakkımızda</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        LordPixel oyuncularına kaliteli ve eşsiz bir deneyim sunan minecraft oyun sunucusudur.
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        LordPixel is not affiliated with Mojang AB or Microsoft.
+                    </p>
+                    <!-- Dil Seçici & Tema Kutusu -->
+                    <div class="flex items-center space-x-2 pt-2">
+                        <button class="bg-white text-gray-900 text-xs font-semibold px-3 py-2 rounded-md flex items-center space-x-1.5 shadow-sm hover:bg-gray-100 transition-colors">
+                            <span>Türkçe</span>
+                            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                        </button>
+                        <button class="bg-white text-gray-900 w-8 h-8 rounded-md flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" aria-label="Tema">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kolon 2: Hızlı Menü -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-white">Hızlı Menü</h3>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><button onclick="switchPage('anasayfa')" class="hover:text-red-400 transition-colors">Anasayfa</button></li>
+                        <li><button onclick="switchPage('market')" class="hover:text-red-400 transition-colors">Mağaza</button></li>
+                        <li><button onclick="switchPage('destek')" class="hover:text-red-400 transition-colors">Destek</button></li>
+                    </ul>
+                </div>
+
+                <!-- Kolon 3: Sosyal Medya -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-white">Sosyal Medya</h3>
+                    <div class="space-y-2.5">
+                        <a href="#" class="block w-full bg-[#1a0a0d] hover:bg-[#260e12] border border-red-900/40 rounded-md px-3.5 py-2.5 transition-colors">
+                            <span class="block text-[11px] font-semibold text-red-500 leading-tight">Powered by</span>
+                            <span class="block text-xs font-bold text-red-400 leading-tight">LordPixel</span>
+                        </a>
+                        <a href="#" class="block w-full bg-[#1a0a0d] hover:bg-[#260e12] border border-red-900/40 rounded-md px-3.5 py-2.5 transition-colors">
+                            <span class="block text-[11px] font-semibold text-red-500 leading-tight">Powered by</span>
+                            <span class="block text-xs font-bold text-red-400 leading-tight">LordPixel</span>
+                        </a>
+                        <a href="#" class="block w-full bg-[#1a0a0d] hover:bg-[#260e12] border border-red-900/40 rounded-md px-3.5 py-2.5 transition-colors">
+                            <span class="block text-[11px] font-semibold text-red-500 leading-tight">Powered by</span>
+                            <span class="block text-xs font-bold text-red-400 leading-tight">LordPixel</span>
+                        </a>
+                        <a href="#" class="block w-full bg-[#1a0a0d] hover:bg-[#260e12] border border-red-900/40 rounded-md px-3.5 py-2.5 transition-colors">
+                            <span class="block text-[11px] font-semibold text-red-500 leading-tight">Powered by</span>
+                            <span class="block text-xs font-bold text-red-400 leading-tight">LordPixel</span>
+                        </a>
+                        <a href="#" class="block w-full bg-[#1a0a0d] hover:bg-[#260e12] border border-red-900/40 rounded-md px-3.5 py-2.5 transition-colors">
+                            <span class="block text-[11px] font-semibold text-red-500 leading-tight">Powered by</span>
+                            <span class="block text-xs font-bold text-red-400 leading-tight">LordPixel</span>
+                        </a>
+                        <div class="pt-1">
+                            <a href="#" class="text-xs text-gray-400 hover:text-red-400 transition-colors">Discord</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolon 4: Bağlantılar -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-white">Bağlantılar</h3>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#" class="hover:text-red-400 transition-colors">Kurallar</a></li>
+                        <li><a href="#" class="hover:text-red-400 transition-colors">Hizmet Şartları</a></li>
+                        <li><a href="#" class="hover:text-red-400 transition-colors">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- En Alt Copyright Satırı -->
+            <div class="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+                <p>Tüm hakları saklıdır. © 2026</p>
+                <p>Powered by <strong class="text-white font-semibold">LordPixel</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bilgi / Haber Detay Penceresi (Modal) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#111318] border border-red-900/50 rounded-xl max-w-lg w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 id="modal-title" class="text-base font-bold text-white">Bilgi</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p id="modal-date" class="text-xs text-red-400 mb-2 hidden"></p>
+            <p id="modal-body" class="text-sm text-gray-300 leading-relaxed mb-6"></p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Giriş Yap / Kayıt Ol Penceresi (Auth Modal) -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#111318] border border-red-900/50 rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 id="auth-modal-title" class="text-base font-bold text-white">Giriş Yap</h3>
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Kullanıcı Adı</label>
+                    <input type="text" id="auth-username" required placeholder="Kullanıcı adınızı girin" class="w-full bg-[#14171f] border border-red-950/50 focus:border-red-600 rounded-lg px-3.5 py-2.5 text-sm text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Şifre</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-[#14171f] border border-red-950/50 focus:border-red-600 rounded-lg px-3.5 py-2.5 text-sm text-white outline-none">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2.5 rounded-md transition-colors shadow-lg shadow-red-600/20">
+                    Giriş Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Durum Yönetimi (State)
+        let currentUser = null;
+        
+        // Örnek ve Canlı Destek Talepleri
+        let supportTickets = [
+            {
+                id: 1,
+                author: 'AhmetPvP',
+                subject: 'Kredi Yükleme Bilgilendirmesi',
+                message: '10 Kredi satın aldım, SMP VIP paketini nasıl aktif edebilirim?',
+                date: 'Bugün 14:20',
+                reply: 'Merhaba AhmetPvP, Market sekmesinden SMP kategorisine girerek 10 Kredi karşılığında VIP paketini anında alabilirsin!'
+            }
+        ];
+
+        // Örnek ve Canlı Yetkili Başvuruları
+        let staffApplications = [];
+
+        // Mobil Menü Aç/Kapa
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        mobileBtn.addEventListener('click', toggleMobileMenu);
+
+        // Sayfa Geçişleri (SPA)
+        const pageTitles = {
+            anasayfa: 'Haber',
+            market: 'Market',
+            kredi: 'Kredi Satın Al',
+            destek: 'Destek',
+            basvuru: 'Yetkili Başvuruları'
+        };
+
+        function switchPage(pageId) {
+            // Tüm sayfaları gizle
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            // Seçili sayfayı göster
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+            // Navbar aktif çizgisini güncelle
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-white', 'border-red-600');
+                link.classList.add('text-gray-400', 'border-transparent');
+            });
+            const activeLink = document.getElementById(`nav-${pageId}`);
+            if (activeLink) {
+                activeLink.classList.remove('text-gray-400', 'border-transparent');
+                activeLink.classList.add('text-white', 'border-red-600');
+            }
+
+            // Breadcrumb güncelle
+            document.getElementById('breadcrumb-current').textContent = pageTitles[pageId] || 'Haber';
+
+            if (pageId === 'market') backToServers();
+            if (pageId === 'destek') renderSupportTickets();
+            if (pageId === 'basvuru') renderApplications();
+        }
+
+        // Market Sunucu Kartı Seçimi (SMP / Arkeil)
+        function openServerMarket(server) {
+            document.getElementById('market-servers-view').classList.add('hidden');
+            document.getElementById('market-smp').classList.add('hidden');
+            document.getElementById('market-arkeil').classList.add('hidden');
+
+            if (server === 'smp') {
+                document.getElementById('market-smp').classList.remove('hidden');
+                document.getElementById('breadcrumb-current').textContent = 'Market / SMP';
+            } else {
+                document.getElementById('market-arkeil').classList.remove('hidden');
+                document.getElementById('breadcrumb-current').textContent = 'Market / Arkeil';
+            }
+        }
+
+        function backToServers() {
+            document.getElementById('market-servers-view').classList.remove('hidden');
+            document.getElementById('market-smp').classList.add('hidden');
+            document.getElementById('market-arkeil').classList.add('hidden');
+            document.getElementById('breadcrumb-current').textContent = 'Market';
+        }
+
+        // Kredi Satın Alma (10 Kredi = 2 TL)
+        function purchaseCredits(amount, price) {
+            const inputUser = document.getElementById('credit-username-input').value.trim();
+            const targetUser = inputUser || (currentUser ? currentUser.username : '');
+
+            if (!targetUser) {
+                showInfoModal('Uyarı', 'Lütfen kredi yüklenecek Minecraft kullanıcı adını girin veya giriş yapın.');
+                return;
+            }
+
+            if (!currentUser) {
+                currentUser = {
+                    username: targetUser,
+                    isAdmin: targetUser.toLowerCase() === 'berkayhd',
+                    credits: amount
+                };
+            } else {
+                currentUser.credits += amount;
+            }
+
+            updateUserUI();
+            showInfoModal('Ödeme Başarılı!', `${targetUser} hesabına ${price} TL karşılığında ${amount} Kredi başarıyla yüklendi! Güncel bakiyeniz: ${currentUser.credits} Kredi.`);
+        }
+
+        // Marketten Ürün Satın Alma (SMP VIP = 10 Kredi)
+        function buyMarketItem(itemName, cost) {
+            if (!currentUser) {
+                showInfoModal('Giriş Gerekli', 'Marketten alışveriş yapabilmek için önce giriş yapmalı veya Kredi Satın Al sayfasından kredi yüklemelisiniz.');
+                return;
+            }
+            if (currentUser.credits < cost) {
+                showInfoModal('Yetersiz Kredi', `${itemName} almak için ${cost} Kredi gerekiyor. Mevcut bakiyeniz: ${currentUser.credits} Kredi. "Kredi Satın Al" sayfasından 2 TL'ye 10 Kredi yükleyebilirsiniz.`);
+                return;
+            }
+
+            currentUser.credits -= cost;
+            updateUserUI();
+            showInfoModal('Satın Alma Başarılı!', `Tebrikler ${currentUser.username}! "${itemName}" paketini ${cost} Kredi karşılığında satın aldınız. Oyun içinde aktif edildi!`);
+        }
+
+        // Destek Talebi Gönderme (BerkayHD'ye düşer)
+        function submitSupportTicket(e) {
+            e.preventDefault();
+            const author = document.getElementById('support-author').value.trim();
+            const subject = document.getElementById('support-subject').value.trim();
+            const message = document.getElementById('support-message').value.trim();
+
+            supportTickets.unshift({
+                id: Date.now(),
+                author,
+                subject,
+                message,
+                date: 'Az önce',
+                reply: ''
+            });
+
+            e.target.reset();
+            renderSupportTickets();
+            showInfoModal('Talep İletildi', 'Destek talebiniz başarıyla oluşturuldu ve yetkililere iletildi.');
+        }
+
+        // Destek Yanıtlama
+        function replyToTicket(id) {
+            const input = document.getElementById(`ticket-reply-input-${id}`);
+            const replyText = input.value.trim();
+            if (!replyText) return;
+
+            const ticket = supportTickets.find(t => t.id === id);
+            if (ticket) {
+                ticket.reply = replyText;
+                renderSupportTickets();
+            }
+        }
+
+        // Destek Taleplerini Listele
+        function renderSupportTickets() {
+            const container = document.getElementById('support-list');
+            const isAdmin = currentUser && currentUser.isAdmin;
+
+            container.innerHTML = supportTickets.map(ticket => `
+                <div class="bg-[#0e1015] border border-red-950/40 rounded-xl p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-red-400">${ticket.author}</span>
+                            <span class="text-xs text-gray-500 ml-2">• ${ticket.date}</span>
+                        </div>
+                        <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${ticket.reply ? 'bg-green-950/50 text-green-400 border border-green-800/40' : 'bg-yellow-950/50 text-yellow-400 border border-yellow-800/40'}">
+                            ${ticket.reply ? 'Yanıtlandı' : 'Yanıt Bekleniyor'}
+                        </span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">${ticket.subject}</h3>
+                    <p class="text-xs sm:text-sm text-gray-300 bg-[#14171f] p-3 rounded-lg border border-white/5">${ticket.message}</p>
+                    
+                    ${ticket.reply ? `
+                        <div class="bg-[#1b0c0f] border-l-4 border-red-600 p-3.5 rounded-r-lg">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 mb-1">
+                                <i class="fa-solid fa-crown"></i>
+                                <span>Yetkili Yanıtı</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-gray-200">${ticket.reply}</p>
+                        </div>
+                    ` : ''}
+
+                    ${isAdmin ? `
+                        <div class="pt-2 flex gap-2">
+                            <input type="text" id="ticket-reply-input-${ticket.id}" placeholder="Yanıt yaz..." class="flex-grow bg-[#14171f] border border-red-800/50 rounded-lg px-3 py-2 text-xs text-white outline-none">
+                            <button onclick="replyToTicket(${ticket.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                                Yanıtla
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Yetkili Başvurusu Gönderme
+        function submitStaffApplication(e) {
+            e.preventDefault();
+            const username = document.getElementById('app-username').value.trim();
+            const age = document.getElementById('app-age').value;
+            const role = document.getElementById('app-role').value;
+            const discord = document.getElementById('app-discord').value.trim();
+            const reason = document.getElementById('app-reason').value.trim();
+
+            staffApplications.unshift({
+                id: Date.now(),
+                username,
+                age,
+                role,
+                discord,
+                reason,
+                date: 'Az önce',
+                status: 'Beklemede',
+                reply: ''
+            });
+
+            e.target.reset();
+            renderApplications();
+            showInfoModal('Başvuru Gönderildi', 'Yetkili başvurunuz başarıyla alındı ve inceleme paneline iletildi.');
+        }
+
+        // Başvuru Cevaplama / Onaylama / Reddetme
+        function replyToApplication(id, newStatus) {
+            const input = document.getElementById(`app-reply-input-${id}`);
+            const replyText = input ? input.value.trim() : '';
+
+            const app = staffApplications.find(a => a.id === id);
+            if (app) {
+                app.status = newStatus;
+                if (replyText) app.reply = replyText;
+                else if (!app.reply) app.reply = `Başvurunuz "${newStatus}" olarak güncellendi.`;
+                renderApplications();
+            }
+        }
+
+        // Başvuruları Listele
+        function renderApplications() {
+            const container = document.getElementById('applications-list');
+            const isAdmin = currentUser && currentUser.isAdmin;
+
+            if (staffApplications.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-[#0e1015] border border-red-950/30 rounded-xl p-8 text-center">
+                        <p class="text-xs sm:text-sm text-gray-400">Henüz gönderilmiş bir yetkili başvurusu bulunmuyor.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = staffApplications.map(app => {
+                let badgeClass = 'bg-yellow-950/50 text-yellow-400 border-yellow-800/40';
+                if (app.status === 'Onaylandı') badgeClass = 'bg-green-950/50 text-green-400 border-green-800/40';
+                if (app.status === 'Reddedildi') badgeClass = 'bg-red-950/50 text-red-400 border-red-800/40';
+
+                return `
+                <div class="bg-[#0e1015] border border-red-950/40 rounded-xl p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-sm font-bold text-white">${app.username}</span>
+                            <span class="text-xs text-red-400 font-semibold ml-2">[${app.role}]</span>
+                            <span class="text-xs text-gray-500 ml-2">Yaş: ${app.age} • DC: ${app.discord}</span>
+                        </div>
+                        <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${badgeClass}">
+                            ${app.status}
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-300 bg-[#14171f] p-3 rounded-lg border border-white/5">${app.reason}</p>
+
+                    ${app.reply ? `
+                        <div class="bg-[#1b0c0f] border-l-4 border-red-600 p-3.5 rounded-r-lg">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 mb-1">
+                                <i class="fa-solid fa-crown"></i>
+                                <span>Değerlendirme Yanıtı</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-gray-200">${app.reply}</p>
+                        </div>
+                    ` : ''}
+
+                    ${isAdmin ? `
+                        <div class="pt-2 space-y-2">
+                            <input type="text" id="app-reply-input-${app.id}" placeholder="Başvuru cevabı yaz..." class="w-full bg-[#14171f] border border-red-800/50 rounded-lg px-3 py-2 text-xs text-white outline-none">
+                            <div class="flex gap-2 justify-end">
+                                <button onclick="replyToApplication(${app.id}, 'Onaylandı')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                                    Onayla & Cevapla
+                                </button>
+                                <button onclick="replyToApplication(${app.id}, 'Reddedildi')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                                    Reddet & Cevapla
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `}).join('');
+        }
+
+        // Giriş Yap / Kayıt Ol İşlemleri
+        const authModal = document.getElementById('auth-modal');
+        function openAuthModal(mode) {
+            document.getElementById('auth-modal-title').textContent = mode === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+            document.getElementById('auth-submit-btn').textContent = mode === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+            authModal.classList.remove('hidden');
+            authModal.classList.add('flex');
+        }
+
+        function closeAuthModal() {
+            authModal.classList.add('hidden');
+            authModal.classList.remove('flex');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            if (!username) return;
+
+            const isAdmin = username.toLowerCase() === 'berkayhd';
+            currentUser = {
+                username: isAdmin ? 'BerkayHD' : username,
+                isAdmin: isAdmin,
+                credits: currentUser ? currentUser.credits : 0
+            };
+
+            updateUserUI();
+            renderSupportTickets();
+            renderApplications();
+            closeAuthModal();
+            e.target.reset();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            updateUserUI();
+            renderSupportTickets();
+            renderApplications();
+        }
+
+        function updateUserUI() {
+            const authButtons = document.getElementById('auth-buttons');
+            const statusBar = document.getElementById('user-status-bar');
+            const adminBadge = document.getElementById('admin-badge');
+
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                statusBar.classList.remove('hidden');
+                statusBar.classList.add('flex');
+                document.getElementById('logged-username').textContent = currentUser.username;
+                document.getElementById('user-credits').textContent = currentUser.credits;
+
+                if (currentUser.isAdmin) {
+                    adminBadge.classList.remove('hidden');
+                } else {
+                    adminBadge.classList.add('hidden');
+                }
+            } else {
+                authButtons.classList.remove('hidden');
+                statusBar.classList.add('hidden');
+                statusBar.classList.remove('flex');
+            }
+        }
+
+        // Genel Bilgi / Haber Detay Penceresi
+        const modal = document.getElementById('custom-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDate = document.getElementById('modal-date');
+        const modalBody = document.getElementById('modal-body');
+
+        function showInfoModal(title, content) {
+            modalTitle.textContent = title;
+            modalDate.classList.add('hidden');
+            modalBody.textContent = content;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function openNewsModal(title, date, content) {
+            modalTitle.textContent = title;
+            if (date) {
+                modalDate.textContent = `Bilgilendirme - ${date}`;
+            } else {
+                modalDate.textContent = 'Bilgilendirme';
+            }
+            modalDate.classList.remove('hidden');
+            modalBody.textContent = content;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) closeAuthModal();
+        });
+
+        // Başlangıçta listeleri hazırla
+        renderSupportTickets();
+        renderApplications();
+    </script>
+</body>
+</html>
